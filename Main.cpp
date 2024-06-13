@@ -32,6 +32,7 @@ int main() {
     int currentPlayer = 0;
 
     while (true) {
+        bool validMove = false;
         std::cout << "Choose a command: roll_dice, build_road, build_settlement, upgrade_settlement, draw_card, exit\n" << std::endl;
         std::cout << "Player " << playerIds[currentPlayer] << ", enter your command (e.g., build_settlement 0): ";
         std::getline(std::cin, command);
@@ -40,11 +41,14 @@ int main() {
             break;
         }
 
-        board.processCommand(command, playerIds[currentPlayer]);
-        board.printBoard();
-        board.printAllPlayersStatus();
+        board.processCommand(command, playerIds[currentPlayer], validMove);
 
-        currentPlayer = (currentPlayer + 1) % playerIds.size();
+        // Check if the last move was valid before switching players
+        if (validMove) {
+            currentPlayer = (currentPlayer + 1) % playerIds.size();
+        } else {
+            std::cout << "Invalid move. Try again." << std::endl;
+        }
     }
 
     return 0;

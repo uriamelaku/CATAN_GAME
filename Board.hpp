@@ -34,10 +34,18 @@ public:
     bool upgradeSettlement(int cornerId, int playerId);
     bool addRoad(int edgeId, int playerId);
     DevelopmentCard drawDevelopmentCard(int playerId);
-    void processCommand(const std::string& command, int playerId);
+    void processCommand(const std::string& command, int playerId, bool& validMove); 
     int rollDice() const;
 
+    bool canUpgradeSettlement(int cornerId, int playerId) const;
+
     void addPlayer(int playerId);
+
+    bool canBuildSettlement(int cornerId, int playerId) const;
+    bool canBuildRoad(int edgeId, int playerId) const;
+
+
+
 };
 
 #endif // BOARD_HPP

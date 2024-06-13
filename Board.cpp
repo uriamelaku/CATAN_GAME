@@ -2,7 +2,10 @@
 #include <iostream>
 #include <sstream>
 #include <map>
+#include <array>
+#include <cstdlib>
 
+using namespace std;
 
 Board::Board() {
     tiles.resize(19);
@@ -237,35 +240,49 @@ void Board::printBoard() const {
 
 
 
-
-
-
-
-
-
-
-
-
-
-    bool Board::addSettlement(int cornerId, int playerId) {
-        if (corners[cornerId].building != BuildingType::NONE) {
-            std::cout << "Corner " << cornerId << " is already occupied." << std::endl;
-            return false;
-        }
-        corners[cornerId].building = BuildingType::SETTLEMENT;
-        corners[cornerId].owner = playerId;
-        return true;
-    }
-
-    bool Board::addRoad(int edgeId, int playerId) {
-    if (edges[edgeId].road != RoadType::NONE) {
-        std::cout << "Edge " << edgeId << " is already occupied." << std::endl;
+bool Board::canBuildSettlement(int cornerId, int playerId) const {
+    if (corners.at(cornerId).building != BuildingType::NONE) {
         return false;
     }
-    edges[edgeId].road = RoadType::ROAD;
-    edges[edgeId].owner = playerId;
+    for (const auto& tile : tiles) {
+        for (const auto& corner : tile.corners) {
+            if (corner == cornerId) {
+                for (const auto& adjacentCorner : tile.corners) {
+                    if (adjacentCorner != cornerId && corners.at(adjacentCorner).building != BuildingType::NONE) {
+                        return false;
+                    }
+                }
+            }
+        }
+    }
     return true;
 }
+
+bool Board::canBuildRoad(int edgeId, int playerId) const {
+    // בדיקה אם כבר יש דרך על הקצה המבוקש
+    if (edges.at(edgeId).road != RoadType::NONE) {
+        return false;
+    }
+    
+    // בדיקה אם הקצה מחובר לפינה של השחקן המבוקש עם יישוב או עיר
+    // for (const auto& tile : tiles) {
+    //     for (int i = 0; i < 6; ++i) {
+    //         if (tile.edges[i] == edgeId) {
+    //             int corner1 = tile.corners[i];
+    //             int corner2 = tile.corners[(i + 1) % 6];
+    //             if ((corners.at(corner1).owner == playerId && (corners.at(corner1).building == BuildingType::SETTLEMENT || corners.at(corner1).building == BuildingType::CITY)) ||
+    //                 (corners.at(corner2).owner == playerId && (corners.at(corner2).building == BuildingType::SETTLEMENT || corners.at(corner2).building == BuildingType::CITY))) {
+    //                 return true;
+    //             }
+    //         }
+    //     }
+    // }
+
+    return true;
+}
+
+
+
 
 void Board::addPlayer(int playerId) {
     players.emplace_back(playerId);
@@ -275,24 +292,92 @@ int Board::rollDice() const {
     return (std::rand() % 6 + 1) + (std::rand() % 6 + 1);
 }
 
-bool Board::upgradeSettlement(int cornerId, int playerId) {
-    // בדוק אם הפינה תפוסה
-    if (corners[cornerId].building == BuildingType::NONE) {
-        std::cout << "Corner " << cornerId << " is empty. Cannot upgrade to a city." << std::endl;
-        return false;
+bool Board::addRoad(int edgeId, int playerId) {
+    for (auto& player : players) {
+        if (player.id == playerId) {
+            if (player.roadCount > 0) {
+                if (canBuildRoad(edgeId, playerId)) {
+                    edges[edgeId].road = RoadType::ROAD;
+                    edges[edgeId].owner = playerId;
+                    player.roads++;
+                    player.roadCount--;
+                    return true;
+                } 
+                else {
+                    std::cout << "Cannot build road at edge " << edgeId << "." << std::endl;
+                    return false;
+                }
+            } else {
+                std::cout << "Player " << playerId << " has no more roads to place." << std::endl;
+                return false;
+            }
+        }
     }
-    
-    // בדוק אם הפינה תפוסה על ידי יישוב של השחקן המבוקש
-    if (corners[cornerId].building != BuildingType::SETTLEMENT || corners[cornerId].owner != playerId) {
-        std::cout << "Corner " << cornerId << " cannot be upgraded by player " << playerId << "." << std::endl;
-        return false;
-    }
+    std::cout << "Player " << playerId << " not found." << std::endl;
+    return false;
+}
 
-    // שדרג את היישוב לעיר
-    corners[cornerId].building = BuildingType::CITY;
-    std::cout << "Player " << playerId << " upgraded a settlement to a city at corner " << cornerId << "." << std::endl;
+bool Board::addSettlement(int cornerId, int playerId) {
+    for (auto& player : players) {
+        if (player.id == playerId) {
+            if (player.settlementCount > 0) {
+                if (canBuildSettlement(cornerId, playerId)) {
+                    corners[cornerId].building = BuildingType::SETTLEMENT;
+                    corners[cornerId].owner = playerId;
+                    player.settlements++;
+                    player.settlementCount--;
+                    return true;
+                } else {
+                    std::cout << "Cannot build settlement at corner " << cornerId << "." << std::endl;
+                    return false;
+                }
+            } else {
+                std::cout << "Player " << playerId << " has no more settlements to place." << std::endl;
+                return false;
+            }
+        }
+    }
+    std::cout << "Player " << playerId << " not found." << std::endl;
+    return false;
+}
+
+bool Board::canUpgradeSettlement(int cornerId, int playerId) const {
+    // בדוק אם הפינה תפוסה על ידי יישוב
+    if (corners.at(cornerId).building != BuildingType::SETTLEMENT) {
+        return false;
+    }
+    // בדוק אם הפינה תפוסה על ידי יישוב של השחקן המבוקש
+    if (corners.at(cornerId).owner != playerId) {
+        return false;
+    }
     return true;
 }
+
+
+bool Board::upgradeSettlement(int cornerId, int playerId) {
+    for (auto& player : players) {
+        if (player.id == playerId) {
+            if (player.cityCount > 0) {
+                if (canUpgradeSettlement(cornerId, playerId)) {
+                    corners[cornerId].building = BuildingType::CITY;
+                    player.cities++;
+                    player.settlements--;
+                    player.cityCount--;
+                    return true;
+                } else {
+                    std::cout << "Cannot upgrade settlement at corner " << cornerId << "." << std::endl;
+                    return false;
+                }
+            } else {
+                std::cout << "Player " << playerId << " has no more cities to place." << std::endl;
+                return false;
+            }
+        }
+    }
+    std::cout << "Player " << playerId << " not found." << std::endl;
+    return false;
+}
+
 
 void Board::printPlayerStatus(int playerId) const {
     for (const auto& player : players) {
@@ -301,6 +386,9 @@ void Board::printPlayerStatus(int playerId) const {
             std::cout << "  Settlements: " << player.settlements << std::endl;
             std::cout << "  Cities: " << player.cities << std::endl;
             std::cout << "  Roads: " << player.roads << std::endl;
+            std::cout << "  Remaining Settlements: " << player.settlementCount << std::endl;
+            std::cout << "  Remaining Cities: " << player.cityCount << std::endl;
+            std::cout << "  Remaining Roads: " << player.roadCount << std::endl;
             std::cout << "  Development Cards: ";
             for (const auto& card : player.developmentCards) {
                 std::cout << static_cast<int>(card.type) << " ";
@@ -321,82 +409,81 @@ void Board::printAllPlayersStatus() const {
 
 
 
+DevelopmentCard Board::drawDevelopmentCard(int playerId) {
+    DevelopmentCard card = developmentDeck.drawCard();
+    for (auto& player : players) {
+        if (player.id == playerId) {
+            player.addDevelopmentCard(card);
+            break;
+        }
+    }
+    return card;
+}
 
-    void Board::processCommand(const std::string& command, int playerId) {
+void Board::processCommand(const std::string& command, int playerId, bool& validMove) {
     std::istringstream iss(command);
     std::string action;
     int id;
-    iss >> action >> id;
 
-    if (action == "build_settlement") {
-        if (addSettlement(id, playerId)) {
-            std::cout << "Player " << playerId << " built a settlement at corner " << id << "." << std::endl;
-        }
-    } else if (action == "upgrade_settlement") {
-        if (upgradeSettlement(id, playerId)) {
-            std::cout << "Player " << playerId << " upgraded a settlement to a city at corner " << id << "." << std::endl;
-        }
-    } else if (action == "build_road") {
-        if (addRoad(id, playerId)) {
-            std::cout << "Player " << playerId << " built a road at edge " << id << "." << std::endl;
-        }
-    } else if (action == "roll_dice") {
+    iss >> action;
+
+    validMove = false;
+
+    // roll_dice command
+    if (action == "roll_dice") {
         int result = rollDice();
         std::cout << "Player " << playerId << " rolled the dice: " << result << std::endl;
-    } else {
+        validMove = true;
+    } 
+    // build_settlement, upgrade_settlement, build_road - commands
+    else if (action == "build_settlement" || action == "upgrade_settlement" || action == "build_road") {
+
+        // if action is build_road, ask for edge ID
+        std::cout << "Enter the " << (action == "build_road" ? "edge" : "corner") << " ID: ";
+        std::cin >> id;
+        std::cin.ignore(); // Ignore the newline character after the number
+        
+         
+        if (action == "build_settlement") {
+            if (addSettlement(id, playerId)) {
+                std::cout << "Player " << playerId << " built a settlement at corner " << id << "." << std::endl;
+                validMove = true;
+            } 
+            else {
+                std::cout << "Failed to build settlement at corner " << id << "." << std::endl;
+            }
+        } 
+        else if (action == "upgrade_settlement") {
+            if (upgradeSettlement(id, playerId)) {
+                std::cout << "Player " << playerId << " upgraded a settlement to a city at corner " << id << "." << std::endl;
+                validMove = true;
+            } else {
+                std::cout << "Failed to upgrade settlement at corner " << id << "." << std::endl;
+            }
+        } 
+        else if (action == "build_road") {
+            if (addRoad(id, playerId)) {
+                std::cout << "Player " << playerId << " built a road at edge " << id << "." << std::endl;
+                validMove = true;
+            } else {
+                std::cout << "Failed to build road at edge " << id << "." << std::endl;
+            }
+        }
+    } 
+    // draw_card command
+    else if (action == "draw_card") {
+        DevelopmentCard card = drawDevelopmentCard(playerId);
+        std::cout << "Player " << playerId << " drew a development card: " << static_cast<int>(card.type) << std::endl;
+        validMove = true;
+    } 
+    else {
         std::cout << "Unknown command." << std::endl;
     }
+
+    // if the move was valid, print the updated board and player status
+    if (validMove) {
+        // Update player status and board only if the move was valid
+        printBoard();
+        printAllPlayersStatus();
+    }
 }
-
-/*
-    bool upgradeSettlement(int cornerId, int playerId) {
-        if (corners[cornerId].building != BuildingType::SETTLEMENT || corners[cornerId].owner != playerId) {
-            std::cout << "Corner " << cornerId << " cannot be upgraded." << std::endl;
-            return false;
-        }
-        corners[cornerId].building = BuildingType::CITY;
-        return true;
-    }
-
-    bool addRoad(int edgeId, int playerId) {
-        if (edges[edgeId].road != RoadType::NONE) {
-            std::cout << "Edge " << edgeId << " is already occupied." << std::endl;
-            return false;
-        }
-        edges[edgeId].road = RoadType::ROAD;
-        edges[edgeId].owner = playerId;
-        return true;
-    }
-
-    void print() const {
-        for (int i = 0; i < tiles.size(); ++i) {
-            std::cout << "Tile " << i << ": " << tiles[i].getTypeString() << "(" << tiles[i].getNumber() << ")\n";
-        }
-    }
-
-    void printStatus() const {
-        std::cout << "Corners status:" << std::endl;
-        for (const auto& corner : corners) {
-            std::cout << "Corner " << corner.first << ": ";
-            if (corner.second.building == BuildingType::NONE) {
-                std::cout << "None";
-            } else if (corner.second.building == BuildingType::SETTLEMENT) {
-                std::cout << "Settlement";
-            } else {
-                std::cout << "City";
-            }
-            std::cout << " (Owner: " << corner.second.owner << ")" << std::endl;
-        }
-
-        std::cout << "Edges status:" << std::endl;
-        for (const auto& edge : edges) {
-            std::cout << "Edge " << edge.first << ": ";
-            if (edge.second.road == RoadType::NONE) {
-                std::cout << "None";
-            } else {
-                std::cout << "Road";
-            }
-            std::cout << " (Owner: " << edge.second.owner << ")" << std::endl;
-        }
-    }
-    */
