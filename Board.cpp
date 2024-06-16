@@ -4,6 +4,9 @@
 #include <map>
 #include <array>
 #include <cstdlib>
+#include <algorithm>
+
+
 
 using namespace std;
 
@@ -104,86 +107,6 @@ Board::Board() {
             }
         }
     }
-/*
-void Board::printGame() const {
-    // מבנה האריחים בלוח קטאן:
-    //          0    1    2
-    //       3    4    5    6
-    //    7    8    9   10   11
-    //       12   13   14   15
-    //          16   17   18
-
-    const std::array<std::array<int, 5>, 5> layout = {{
-        {-1,  0,  1,  2, -1},
-        { 3,  4,  5,  6, -1},
-        { 7,  8,  9, 10, 11},
-        {-1, 12, 13, 14, 15},
-        {-1, 16, 17, 18, -1}
-    }};
-
-    const std::string emptyHex = "                   ";
-
-    auto getHexRepresentation = [&](int tileIndex) -> std::vector<std::string> {
-        if (tileIndex == -1) {
-            return {emptyHex, emptyHex, emptyHex, emptyHex, emptyHex, emptyHex, emptyHex, emptyHex, emptyHex};
-        }
-
-        const HexTile& tile = tiles[tileIndex];
-        std::vector<std::string> hex = {
-            "   1------2   ",
-            "  /        \\  ",
-            " /          \\ ",
-            "3            4",
-            " \\          / ",
-            "  \\        /  ",
-            "   6------5   "
-        };
-
-        std::string numStr = std::to_string(tile.getNumber());
-        std::string typeStr = tile.getTypeString().substr(0, 5);
-
-        hex[3].replace(6, numStr.length(), numStr); // Replace with number in the middle
-        hex[4].replace(6 - typeStr.length() / 2, typeStr.length(), typeStr); // Replace with resource type below the number
-
-        // Add corner numbers
-        std::string corner0 = std::to_string(tile.corners[0]);
-        std::string corner1 = std::to_string(tile.corners[1]);
-        std::string corner2 = std::to_string(tile.corners[2]);
-        std::string corner3 = std::to_string(tile.corners[3]);
-        std::string corner4 = std::to_string(tile.corners[4]);
-        std::string corner5 = std::to_string(tile.corners[5]);
-
-        hex[0].replace(3, corner0.length(), corner0); // Top left corner
-        hex[0].replace(10, corner1.length(), corner1); // Top right corner
-        hex[3].replace(0, corner2.length(), corner2); // Mid left corner
-        hex[3].replace(13, corner3.length(), corner3); // Mid right corner
-        hex[6].replace(3, corner4.length(), corner4); // Bottom left corner
-        hex[6].replace(10, corner5.length(), corner5); // Bottom right corner
-
-        return hex;
-    };
-
-    std::vector<std::vector<std::string>> rows;
-    for (const auto& row : layout) {
-        std::vector<std::vector<std::string>> hexRow;
-        for (int tileIndex : row) {
-            hexRow.push_back(getHexRepresentation(tileIndex));
-        }
-
-        for (int i = 0; i < 7; ++i) {
-            std::string rowStr;
-            for (const auto& hex : hexRow) {
-                rowStr += hex[i];
-            }
-            rows.push_back({rowStr});
-        }
-    }
-
-    for (const auto& row : rows) {
-        std::cout << row[0] << std::endl;
-    }
-}
-*/
 
 void Board::printBoard() const {
     std::cout << std::endl << "                     ********** CATAN BOARD **********" << std::endl;
@@ -204,9 +127,9 @@ void Board::printBoard() const {
         }
         const HexTile& tile = tiles[tileIndex];
         std::string resource = tile.getTypeString();
-        if (resource.length() > 5) {
-            resource = resource.substr(0, 5); // Limit resource type to 5 characters
-        }
+        // if (resource.length() > 5) {
+        //     resource = resource.substr(0, 5); // Limit resource type to 5 characters
+        // }
         std::string number = std::to_string(tile.getNumber());
         return " " + resource + " " + number + " ";
     };
@@ -242,21 +165,35 @@ void Board::printBoard() const {
 
 bool Board::canBuildSettlement(int cornerId, int playerId) const {
     if (corners.at(cornerId).building != BuildingType::NONE) {
-        return false;
+        return false; // כבר יש בנייה בפינה זו
     }
+
+    // בדוק אם יש יישוב סמוך (במרחק של 2 פינות)
     for (const auto& tile : tiles) {
-        for (const auto& corner : tile.corners) {
-            if (corner == cornerId) {
-                for (const auto& adjacentCorner : tile.corners) {
-                    if (adjacentCorner != cornerId && corners.at(adjacentCorner).building != BuildingType::NONE) {
-                        return false;
-                    }
+        if (std::find(tile.corners.begin(), tile.corners.end(), cornerId) != tile.corners.end()) {
+            for (const auto& adjacentCorner : tile.corners) {
+                if (cornerId != adjacentCorner && corners.at(adjacentCorner).building != BuildingType::NONE) {
+                    return false; // יש יישוב סמוך
                 }
             }
         }
     }
-    return true;
+
+    // בדוק אם יש דרך סמוכה של השחקן שמחוברת לפינה
+    for (const auto& tile : tiles) {
+        if (std::find(tile.corners.begin(), tile.corners.end(), cornerId) != tile.corners.end()) {
+            for (const auto& edge : tile.edges) {
+                const auto& edgeTile = edges.at(edge);
+                if (edgeTile.owner == playerId && edgeTile.road == RoadType::ROAD) {
+                    return true; // יש דרך סמוכה של השחקן שמחוברת לפינה
+                }
+            }
+        }
+    }
+
+    return false;
 }
+
 
 bool Board::canBuildRoad(int edgeId, int playerId) const {
     // בדיקה אם כבר יש דרך על הקצה המבוקש
@@ -342,16 +279,35 @@ bool Board::addSettlement(int cornerId, int playerId) {
 }
 
 bool Board::canUpgradeSettlement(int cornerId, int playerId) const {
-    // בדוק אם הפינה תפוסה על ידי יישוב
+    // check if the corner has a settlement
     if (corners.at(cornerId).building != BuildingType::SETTLEMENT) {
         return false;
     }
-    // בדוק אם הפינה תפוסה על ידי יישוב של השחקן המבוקש
+    // check if the corner belongs to the player
     if (corners.at(cornerId).owner != playerId) {
         return false;
     }
     return true;
 }
+
+// this function gives the resources to the players according to the dice roll
+void Board::distributeResources(int diceRoll) {
+    for (const auto& tile : tiles) {
+        if (tile.getNumber() == diceRoll) {
+            for (const auto& cornerId : tile.corners) {
+                const auto& corner = corners.at(cornerId);
+                if (corner.building != BuildingType::NONE) {
+                    for (auto& player : players) {
+                        if (player.id == corner.owner) {
+                            player.gainResources(tile.type, (corner.building == BuildingType::CITY) ? 2 : 1);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 
 
 bool Board::upgradeSettlement(int cornerId, int playerId) {
@@ -390,9 +346,15 @@ void Board::printPlayerStatus(int playerId) const {
             std::cout << "  Remaining Cities: " << player.cityCount << std::endl;
             std::cout << "  Remaining Roads: " << player.roadCount << std::endl;
             std::cout << "  Development Cards: ";
-            for (const auto& card : player.developmentCards) {
-                std::cout << static_cast<int>(card.type) << " ";
+            int count = 0;
+            for (const auto& card : player.developmentCards) { 
+               count++;
             }
+            std::cout << "  Resources: ";
+            for (const auto& resource : player.resources) {
+                std::cout << resourceTypeToString(resource.first) << ": " << resource.second << " ";
+            }
+            std::cout << count;
             std::cout << std::endl;
             break;
         }
@@ -433,7 +395,9 @@ void Board::processCommand(const std::string& command, int playerId, bool& valid
     if (action == "roll_dice") {
         int result = rollDice();
         std::cout << "Player " << playerId << " rolled the dice: " << result << std::endl;
-        validMove = true;
+        distributeResources(result);
+        // to fix
+        validMove =true;
     } 
     // build_settlement, upgrade_settlement, build_road - commands
     else if (action == "build_settlement" || action == "upgrade_settlement" || action == "build_road") {
@@ -473,7 +437,7 @@ void Board::processCommand(const std::string& command, int playerId, bool& valid
     // draw_card command
     else if (action == "draw_card") {
         DevelopmentCard card = drawDevelopmentCard(playerId);
-        std::cout << "Player " << playerId << " drew a development card: " << static_cast<int>(card.type) << std::endl;
+        std::cout << "Player " << playerId << " drew a development card: " << card.getTypeString() << std::endl;
         validMove = true;
     } 
     else {

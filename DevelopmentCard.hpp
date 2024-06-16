@@ -1,6 +1,8 @@
 #ifndef DEVELOPMENTCARD_HPP
 #define DEVELOPMENTCARD_HPP
 
+#include <string>
+
 enum class DevelopmentCardType {
     KNIGHT,
     VICTORY_POINT,
@@ -14,6 +16,7 @@ public:
     DevelopmentCardType type;
 
     DevelopmentCard(DevelopmentCardType cardType);
+    std::string getTypeString() const;
 };
 
 #endif // DEVELOPMENTCARD_HPP

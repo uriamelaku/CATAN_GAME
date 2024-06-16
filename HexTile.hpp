@@ -3,17 +3,14 @@
 
 #include <vector>
 #include <string>
-
-enum class ResourceType {
-    FOREST, HILL, PASTURE, FIELD, MOUNTAIN, DESERT
-};
+#include "ResourceType.hpp"
 
 class HexTile {
 private:
-    ResourceType type;
-    int number;
+    int number; // קודם מספר
 
 public:
+    ResourceType type; // ואז סוג המשאב
     std::vector<int> corners; // indices of corners
     std::vector<int> edges; // indices of edges
 

@@ -11,6 +11,7 @@
 #include "DevelopmentCard.hpp"
 #include "DevelopmentCardDeck.hpp"
 #include "Player.hpp"
+#include "ResourceType.hpp"
 
 class Board {
 private:
@@ -43,6 +44,7 @@ public:
 
     bool canBuildSettlement(int cornerId, int playerId) const;
     bool canBuildRoad(int edgeId, int playerId) const;
+    void distributeResources(int diceRoll);
 
 
 

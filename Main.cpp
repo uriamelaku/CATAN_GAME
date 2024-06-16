@@ -46,7 +46,8 @@ int main() {
         // Check if the last move was valid before switching players
         if (validMove) {
             currentPlayer = (currentPlayer + 1) % playerIds.size();
-        } else {
+        } 
+        else {
             std::cout << "Invalid move. Try again." << std::endl;
         }
     }

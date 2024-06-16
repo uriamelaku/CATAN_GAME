@@ -5,8 +5,12 @@
 
 DevelopmentCardDeck::DevelopmentCardDeck() {
     // Initialize deck with a set number of each card type
-    for (int i = 0; i < 14; ++i) deck.emplace_back(DevelopmentCardType::KNIGHT);
-    for (int i = 0; i < 5; ++i) deck.emplace_back(DevelopmentCardType::VICTORY_POINT);
+    for (int i = 0; i < 14; ++i){
+        deck.emplace_back(DevelopmentCardType::KNIGHT);
+    }
+    for (int i = 0; i < 5; ++i){
+        deck.emplace_back(DevelopmentCardType::VICTORY_POINT);
+    }
     for (int i = 0; i < 2; ++i) {
         deck.emplace_back(DevelopmentCardType::ROAD_BUILDING);
         deck.emplace_back(DevelopmentCardType::YEAR_OF_PLENTY);

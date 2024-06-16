@@ -3,6 +3,10 @@
 
 #include "DevelopmentCard.hpp"
 #include <vector>
+#include <unordered_map>
+#include "ResourceType.hpp"
+
+//enum class ResourceType { WOOD, BRICK, SHEEP, WHEAT, ORE, NONE };
 
 class Player {
 public:
@@ -14,10 +18,14 @@ public:
     int settlementCount; // מספר היישובים שנותרו לשחקן לבנות
     int cityCount;       // מספר הערים שנותרו לשחקן לבנות
     std::vector<DevelopmentCard> developmentCards;
+    std::unordered_map<ResourceType, int> resources; // משאבים שיש לשחקן
 
     Player(int id);
     
     void addDevelopmentCard(const DevelopmentCard& card);
+    bool hasResources(const std::unordered_map<ResourceType, int>& cost) const;
+    void spendResources(const std::unordered_map<ResourceType, int>& cost);
+    void gainResources(ResourceType type, int amount);
 };
 
 #endif // PLAYER_HPP
