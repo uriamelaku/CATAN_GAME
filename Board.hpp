@@ -12,6 +12,7 @@
 #include "DevelopmentCardDeck.hpp"
 #include "Player.hpp"
 #include "ResourceType.hpp"
+#include <unordered_set>
 
 class Board {
 private:
@@ -45,6 +46,22 @@ public:
     bool canBuildSettlement(int cornerId, int playerId) const;
     bool canBuildRoad(int edgeId, int playerId) const;
     void distributeResources(int diceRoll);
+    void processCommandWithBankTrade(const std::string& command, int playerId);
+    ResourceType stringToResourceType(const std::string& resourceStr) const;
+    void handleRobber();
+    void moveRobber(int tileId);
+
+    void checkLongestRoad();
+    int calculateLongestRoad(int playerId) const;
+    void checkLargestArmy();
+    void endGame(int winnerId, int maxPoints) const;
+
+    int dfsFindLongestRoad(int edgeId, int playerId, std::unordered_set<int>& visited) const;
+    std::vector<int> getConnectedEdges(int edgeId) const;
+
+    void playRoadBuilding(int playerId);
+    void playYearOfPlenty(int playerId, ResourceType resourceType1, ResourceType resourceType2);
+    void playMonopoly(int playerId, ResourceType resourceType);
 
 
 

@@ -6,7 +6,7 @@ enum class RoadType { NONE, ROAD };
 class Edge {
 public:
     RoadType road;
-    int owner; // מי הבעלים של הדרך (למשל, מספר השחקן)
+    int owner; // who is the owner of the road (e.g. player number)
 
     Edge();
 };

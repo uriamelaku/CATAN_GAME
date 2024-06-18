@@ -6,7 +6,7 @@ enum class BuildingType { NONE, SETTLEMENT, CITY };
 class Corner {
 public:
     BuildingType building;
-    int owner; // מי הבעלים של הבניין (למשל, מספר השחקן)
+    int owner; // who is the owner of the corner (e.g. player number)
 
     Corner();
 };

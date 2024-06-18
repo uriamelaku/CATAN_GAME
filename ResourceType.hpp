@@ -4,7 +4,7 @@
 #include <string>
 
 enum class ResourceType {
-    FOREST, HILL, PASTURE, FIELD, MOUNTAIN, DESERT, WOOD, BRICK, SHEEP, WHEAT, ORE, NONE
+    FOREST, HILL, PASTURE, FIELD, MOUNTAIN, IRON, DESERT, WOOD, BRICK, WHEAT, WOOL, NONE
 };
 
 std::string resourceTypeToString(ResourceType type);

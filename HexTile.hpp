@@ -7,10 +7,10 @@
 
 class HexTile {
 private:
-    int number; // קודם מספר
+    int number; 
 
 public:
-    ResourceType type; // ואז סוג המשאב
+    ResourceType type; // type of resource
     std::vector<int> corners; // indices of corners
     std::vector<int> edges; // indices of edges
 
@@ -18,6 +18,7 @@ public:
 
     std::string getTypeString() const;
     int getNumber() const;
+    bool hasRobber;
 };
 
 #endif // HEX_TILE_HPP

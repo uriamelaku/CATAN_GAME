@@ -16,7 +16,6 @@ DevelopmentCardDeck::DevelopmentCardDeck() {
         deck.emplace_back(DevelopmentCardType::YEAR_OF_PLENTY);
         deck.emplace_back(DevelopmentCardType::MONOPOLY);
     }
-
     shuffleDeck();
 }
 
