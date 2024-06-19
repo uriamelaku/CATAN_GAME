@@ -10,6 +10,9 @@
 #include <unordered_map>
 #include <array>
 #include <string>
+#include <array>
+#include <string>
+
 
 void clearScreen() {
     #ifdef _WIN32
@@ -45,6 +48,9 @@ int main() {
         board.addPlayer(i);
     }
 
+    // Add resources and cards to the players for testing purposes
+    board.addAlotOfResourcesAndCards();
+
     std::string command;
     int currentPlayer = 0;
     bool diceRolled = false;
@@ -59,8 +65,11 @@ int main() {
         std::cout << "                        9. play card\n";
         std::cout << std::endl;
         std::cout << "Player " << playerIds[currentPlayer] << ", enter your command: ";
+        here:
         std::getline(std::cin, command);
-
+        if(command == "") {
+            goto here;
+        }
         if (command == "7") {
             clearScreen();
             board.printAllPlayersStatus();
@@ -81,14 +90,21 @@ int main() {
             board.processCommandWithBankTrade(command, playerIds[currentPlayer]);
             validMove = true; 
         } 
-        else {
+        else if(command == "9" || command == "6" || command == "5" || command == "4" || command == "3" || command == "2") {
             board.processCommand(command, playerIds[currentPlayer], validMove);
+            validMove = true;
         }
 
         // Check if the roll_dice command was issued
         if (command == "1" && validMove) {
             diceRolled = true;
+            validMove = true;
         }
+        else if (!validMove) {
+            std::cout << "Invalid command. Please try again.\n";
+        }
+
+
     }
 
     return 0;

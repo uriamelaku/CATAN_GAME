@@ -46,52 +46,52 @@ Board::Board() {
     }
 
     void Board::initializeConnections() {
-        // אתחול הפינות והקווים עבור כל אריח
+        // set the connections between corners and edges
         static const std::array<std::array<int, 6>, 19> cornerConnections = {{
-            {0, 1, 2, 3, 4, 5},      // אריח 0*
-            {6, 7, 8, 9, 2, 1},      // אריח 1
-            {10, 11, 12, 13, 8, 7},  // אריח 2
-            {4, 3, 14, 15, 16, 17},   // אריח 3
-            {2, 9, 18, 19, 14, 3},  // אריח 4
-            {8, 13, 20, 21, 18, 9}, // אריח 5
-            {12, 22, 23, 24, 20, 13}, // אריח 6
-            {16, 15, 25, 26, 27, 28},  // אריח 7
-            {14, 19, 29, 30, 25, 15}, // אריח 8
-            {18, 21, 31, 32, 29, 19}, // אריח 9
-            {20, 24, 33, 34, 31, 21}, // אריח 10
-            {23, 35, 36, 37, 33, 24}, // אריח 11
-            {25, 30, 40, 39, 38, 26}, // אריח 12
-            {29, 32, 42, 41, 40, 30}, // אריח 13
-            {31, 34, 44, 43, 42, 32}, // אריח 14
-            {33, 37, 46, 45, 44, 34}, // אריח 15
-            {40, 41, 49, 48, 47, 39}, // אריח 16
-            {42, 43, 51, 50, 49, 41}, // אריח 17
-            {44, 45, 53, 52, 51, 43}, // אריח 18
+            {0, 1, 2, 3, 4, 5},      // 
+            {6, 7, 8, 9, 2, 1},      // 
+            {10, 11, 12, 13, 8, 7},  // 
+            {4, 3, 14, 15, 16, 17},   // 
+            {2, 9, 18, 19, 14, 3},  //  4
+            {8, 13, 20, 21, 18, 9}, //  5
+            {12, 22, 23, 24, 20, 13}, //  6
+            {16, 15, 25, 26, 27, 28},  //  7
+            {14, 19, 29, 30, 25, 15}, //  8
+            {18, 21, 31, 32, 29, 19}, //  9
+            {20, 24, 33, 34, 31, 21}, //  10
+            {23, 35, 36, 37, 33, 24}, //  11
+            {25, 30, 40, 39, 38, 26}, //  12
+            {29, 32, 42, 41, 40, 30}, //  13
+            {31, 34, 44, 43, 42, 32}, //  14
+            {33, 37, 46, 45, 44, 34}, //  15
+            {40, 41, 49, 48, 47, 39}, //  16
+            {42, 43, 51, 50, 49, 41}, //  17
+            {44, 45, 53, 52, 51, 43}, //  18
         }};
 
         static const std::array<std::array<int, 6>, 19> edgeConnections = {{
-            {1, 2, 3, 4, 5, 6},      // אריח 0
-            {7, 8, 9, 10, 2, 11},     // אריח 1
-            {12, 13, 14, 15, 8, 16}, // אריח 2
-            {4, 17, 18, 19, 20, 21},   // אריח 3
-            {10, 22, 23, 24, 17, 3},  // אריח 4
-            {15, 25, 26, 27, 22, 9},// אריח 5
-            {28, 29, 30, 31, 25, 14},// אריח 6
-            {19, 32, 33, 34, 35, 36}, // אריח 7
-            {24, 37, 38, 39, 32, 18},// אריח 8
-            {27, 40, 41, 42, 37, 23},// אריח 9
-            {31, 43, 44, 45, 40, 26},// אריח 10
-            {46, 47, 48, 49, 43, 30},// אריח 11
-            {39, 50, 51, 52, 53, 33},// אריח 12
-            {42, 54, 55, 56, 50, 38},// אריח 13
-            {45, 57, 58, 59, 54, 41},// אריח 14
-            {49, 60, 61, 62, 57, 44},// אריח 15
-            {56, 63, 64, 65, 66, 51},// אריח 16
-            {59, 67, 68, 69, 63, 55},// אריח 17
-            {62, 70, 71, 72, 67, 58},// אריח 18
+            {1, 2, 3, 4, 5, 6},      //  0
+            {7, 8, 9, 10, 2, 11},     //  1
+            {12, 13, 14, 15, 8, 16}, //  2
+            {4, 17, 18, 19, 20, 21},   //  3
+            {10, 22, 23, 24, 17, 3},  //  4
+            {15, 25, 26, 27, 22, 9},//  5
+            {28, 29, 30, 31, 25, 14},//  6
+            {19, 32, 33, 34, 35, 36}, //  7
+            {24, 37, 38, 39, 32, 18},//  8
+            {27, 40, 41, 42, 37, 23},//  9
+            {31, 43, 44, 45, 40, 26},//  10
+            {46, 47, 48, 49, 43, 30},//  11
+            {39, 50, 51, 52, 53, 33},//  12
+            {42, 54, 55, 56, 50, 38},//  13
+            {45, 57, 58, 59, 54, 41},//  14
+            {49, 60, 61, 62, 57, 44},//  15
+            {56, 63, 64, 65, 66, 51},//  16
+            {59, 67, 68, 69, 63, 55},//  17
+            {62, 70, 71, 72, 67, 58},//  18
         }};
 
-        // חיבור הפינות והקווים לאריחים
+        // iterate over all tiles and set the connections between corners and edges   
         for (size_t i = 0; i < tiles.size(); ++i) {
             for (int j = 0; j < 6; ++j) {
                 int cornerId = cornerConnections[i][j];
@@ -107,6 +107,7 @@ Board::Board() {
                 tiles[i].edges[j] = edgeId;
             }
         }
+        
     }
 
 
@@ -159,31 +160,55 @@ void Board::printBoard() const {
     }
 
     std::cout << std::endl << "                     **********************************" << std::endl;
+
+    
+    
+}
+
+void Board::addAlotOfResourcesAndCards(){
+
+   
+        for(auto& player : players){
+            player.gainResources(ResourceType::BRICK, 10);
+            player.gainResources(ResourceType::WOOD, 10);
+            player.gainResources(ResourceType::WOOL, 10);
+            player.gainResources(ResourceType::WHEAT, 10);
+            player.gainResources(ResourceType::IRON, 10);
+            // add development cards to each player
+            for(int i = 0; i < 3; i++){
+                player.addDevelopmentCard(DevelopmentCard(DevelopmentCardType::KNIGHT));
+                player.addDevelopmentCard(DevelopmentCard(DevelopmentCardType::MONOPOLY));
+                player.addDevelopmentCard(DevelopmentCard(DevelopmentCardType::ROAD_BUILDING));
+                //player.addDevelopmentCard(DevelopmentCard(DevelopmentCardType::VICTORY_POINT));
+                player.addDevelopmentCard(DevelopmentCard(DevelopmentCardType::YEAR_OF_PLENTY));
+            }
+        }
+    
 }
 
 bool Board::canBuildSettlement(int cornerId, int playerId) const {
     if (corners.at(cornerId).building != BuildingType::NONE) {
-        return false; // כבר יש בנייה בפינה זו
+        return false; // the corner is already occupied
     }
 
-    // בדוק אם יש יישוב סמוך (במרחק של 2 פינות)
+    // check if the corner is connected to a road
     for (const auto& tile : tiles) {
         if (std::find(tile.corners.begin(), tile.corners.end(), cornerId) != tile.corners.end()) {
             for (const auto& adjacentCorner : tile.corners) {
                 if (cornerId != adjacentCorner && corners.at(adjacentCorner).building != BuildingType::NONE) {
-                    return false; // יש יישוב סמוך
+                    return false; // the corner is connected to a road    
                 }
             }
         }
     }
 
-    // בדוק אם יש דרך סמוכה של השחקן שמחוברת לפינה
+    // check if the corner is connected to a settlement or city of the player
     for (const auto& tile : tiles) {
         if (std::find(tile.corners.begin(), tile.corners.end(), cornerId) != tile.corners.end()) {
             for (const auto& edge : tile.edges) {
                 const auto& edgeTile = edges.at(edge);
                 if (edgeTile.owner == playerId && edgeTile.road == RoadType::ROAD) {
-                    return true; // יש דרך סמוכה של השחקן שמחוברת לפינה
+                    return true; // the corner is connected to a road of the player 
                 }
             }
         }
@@ -193,25 +218,11 @@ bool Board::canBuildSettlement(int cornerId, int playerId) const {
 }
 
 bool Board::canBuildRoad(int edgeId, int playerId) const {
-    // בדיקה אם כבר יש דרך על הקצה המבוקש
+    // check if the edge is already occupied
     if (edges.at(edgeId).road != RoadType::NONE) {
         return false;
     }
-    
-    // בדיקה אם הקצה מחובר לפינה של השחקן המבוקש עם יישוב או עיר
-    // for (const auto& tile : tiles) {
-    //     for (int i = 0; i < 6; ++i) {
-    //         if (tile.edges[i] == edgeId) {
-    //             int corner1 = tile.corners[i];
-    //             int corner2 = tile.corners[(i + 1) % 6];
-    //             if ((corners.at(corner1).owner == playerId && (corners.at(corner1).building == BuildingType::SETTLEMENT || corners.at(corner1).building == BuildingType::CITY)) ||
-    //                 (corners.at(corner2).owner == playerId && (corners.at(corner2).building == BuildingType::SETTLEMENT || corners.at(corner2).building == BuildingType::CITY))) {
-    //                 return true;
-    //             }
-    //         }
-    //     }
-    // }
-
+    // check if the edge is connected to a settlement or city of the player
     return true;
 }
 
@@ -470,22 +481,27 @@ void Board::printPlayerStatus(int playerId) const {
             std::cout << "  Remaining Settlements: " << player.settlementCount << std::endl;
             std::cout << "  Remaining Cities: " << player.cityCount << std::endl;
             std::cout << "  Remaining Roads: " << player.roadCount << std::endl;
-            std::cout << "  Development Cards Amount: ";
-            int count = 0;
-            for (const auto& card : player.developmentCards) { 
-               count++;
-            }
-            std::cout << count << endl;
+
+            // Print the amount of development cards
+            std::cout << "  Development Cards Amount: " << player.developmentCards.size() << std::endl;
+
+            // Print the types of development cards
             std::cout << "  Development Cards Type: ";
             for (const auto& card : player.developmentCards) {
                 std::cout << player.DevelopmentCardTypeToString(card.type) << ", ";
             }
-            std::cout << endl << "  Resources:   ";
+            std::cout << std::endl;
+
+            // Print the resources
+            std::cout << "  Resources:   ";
             for (const auto& resource : player.resources) {
-                if(resource.first == ResourceType::DESERT) continue;
+                if (resource.first == ResourceType::DESERT) continue;
                 std::cout << resourceTypeToString(resource.first) << ": " << resource.second << " ";
             }
-            std::cout << endl << "  Points: " << player.victoryPoints << std::endl;
+            std::cout << std::endl;
+
+            // Print the victory points
+            std::cout << "  Points: " << player.victoryPoints << std::endl;
             std::cout << std::endl << std::endl;
             break;
         }
@@ -626,25 +642,27 @@ void Board::processCommand(const std::string& command, int playerId, bool& valid
             }
         }
     } 
-    else if (action == "9") {
-        std::cout << "Enter the development card type:  (road building, year of plenty, monopoly)" << std::endl;
+    else if (action == "9") 
+    {
+        std::cout << "Enter the development card type:  (1.road building, 2.year of plenty, 3.monopoly)" << std::endl;
         std::string cardType;
         std::cin >> cardType;
 
-        if (cardType == "road building") {
+        if (cardType == "1") {
             playRoadBuilding(playerId);
+            validMove = true;
         } 
-        else if (cardType == "year of plenty") {
+        else if (cardType == "2") {
             std::string resourceStr1, resourceStr2;
-            std::cout << "Enter two resources to gain: (wood, brick, wool, wheat, iron)";
+            std::cout << "Enter two resources to gain: (wood, brick, wool, wheat, iron)" << std::endl;
             std::cin >> resourceStr1 >> resourceStr2;
             ResourceType resourceType1 = stringToResourceType(resourceStr1);
             ResourceType resourceType2 = stringToResourceType(resourceStr2);
             playYearOfPlenty(playerId, resourceType1, resourceType2);
         } 
-        else if (cardType == "monopoly") {
+        else if (cardType == "3") {
             std::string resourceStr;
-            std::cout << "Enter the resource to monopolize:  (wood, brick, wool, wheat, iron)";
+            std::cout << "Enter the resource to monopolize:  (wood, brick, wool, wheat, iron)" << std::endl;
             std::cin >> resourceStr;
             ResourceType resourceType = stringToResourceType(resourceStr);
             playMonopoly(playerId, resourceType);
@@ -655,7 +673,7 @@ void Board::processCommand(const std::string& command, int playerId, bool& valid
         validMove = true;
     } 
     else {
-        std::cout << "Unknown command." << std::endl;
+        std::cout << "nknown command." << std::endl;
     }
 
 
@@ -677,7 +695,7 @@ void Board::processCommand(const std::string& command, int playerId, bool& valid
         printPlayerStatus(playerId);
     }
 }
-///////////////////////////////////////////
+
 void Board::checkLongestRoad() {
     int longestRoad = 0;
     int playerWithLongestRoad = -1;
