@@ -5,6 +5,7 @@ Game Commands
 ## Map of the game
 #### The map of the game is also here. In the map you can find the resoreces and all the cornners and eddges ID.
 
+### Commands
 Commands are used to interact with the game. Each command corresponds to an action a player can take. Here is a list of available commands:
 
 #### Roll Dice
