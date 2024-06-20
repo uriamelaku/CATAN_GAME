@@ -3,7 +3,7 @@ Overview
 This project is a command-line implementation of the popular board game "Catan". The game is played by multiple players who take turns to build settlements, roads, and cities, trade resources, and play development cards. The goal is to be the first player to reach 10 victory points.
 Game Commands
 ## Map of the game
-#### The map of the game is also here. In the map you can find the resoreces and all the cornners and eddges ID.
+#### The map of the game is also here under the name "BOARD MAP". In the map you can find the resoreces and all the cornners and eddges ID.
 
 ### Commands
 Commands are used to interact with the game. Each command corresponds to an action a player can take. Here is a list of available commands:
