@@ -5,6 +5,18 @@ Game Commands
 ## Map of the game
 #### The map of the game is also here under the name "BOARD MAP". In the map you can find the resoreces and all the cornners and eddges ID.
 
+## How to run it
+#### To run the game
+- open the terminal in the file where all the files are
+- write "make"
+- then "./Main
+#### To run the tests
+- open the terminal in the file where all the files are
+- create a new file named "test"
+- write "cmake .."
+- then "make"
+- then "./test_catan"
+
 ### Commands
 Commands are used to interact with the game. Each command corresponds to an action a player can take. Here is a list of available commands:
 
