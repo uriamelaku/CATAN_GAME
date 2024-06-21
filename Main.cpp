@@ -1,3 +1,5 @@
+//ooriamelaku@gmail.com
+//208734889
 #include <iostream>
 #include "Board.hpp"
 #include "Corner.hpp"
