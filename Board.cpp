@@ -37,7 +37,7 @@ Board::Board() {
         initializeTile(17, ResourceType::PASTURE, 6);
         initializeTile(18, ResourceType::FIELD, 11);
 
-        // אתחול פינות וקווים לפי טבלה קבועה
+        // set the connections between corners and edges
         initializeConnections();
     }
 
@@ -93,17 +93,24 @@ Board::Board() {
 
         // iterate over all tiles and set the connections between corners and edges   
         for (size_t i = 0; i < tiles.size(); ++i) {
+            // iterate over all corners of the tile
             for (int j = 0; j < 6; ++j) {
+                // cornerConnections[i][j] is the ID of the corner of the current tile
                 int cornerId = cornerConnections[i][j];
+                // if the corner does not exist, create a new corner
                 if (corners.find(cornerId) == corners.end()) {
                     corners[cornerId] = Corner();
                 }
+                // set the connections between the tile and the corner
                 tiles[i].corners[j] = cornerId;
 
+                // edgeConnections[i][j] is the ID of the edge of the current tile
                 int edgeId = edgeConnections[i][j];
+                // if the edge does not exist, create a new edge
                 if (edges.find(edgeId) == edges.end()) {
                     edges[edgeId] = Edge();
                 }
+                // set the connections between the tile and the edge
                 tiles[i].edges[j] = edgeId;
             }
         }
@@ -644,12 +651,19 @@ void Board::processCommand(const std::string& command, int playerId, bool& valid
     } 
     else if (action == "9") 
     {
-        std::cout << "Enter the development card type:  (1.road building, 2.year of plenty, 3.monopoly)" << std::endl;
+        std::cout << "Enter the development card type:  (1.road building, 2.year of plenty, 3.monopoly, 4.knight)" << std::endl;
         std::string cardType;
         std::cin >> cardType;
 
         if (cardType == "1") {
             playRoadBuilding(playerId);
+            // remove the road building card from the player's hand
+            for (auto& player : players) {
+                if (player.id == playerId) {
+                    player.removeDevelopmentCard(DevelopmentCard(DevelopmentCardType::ROAD_BUILDING));
+                    break;
+                }
+            }
             validMove = true;
         } 
         else if (cardType == "2") {
@@ -659,6 +673,14 @@ void Board::processCommand(const std::string& command, int playerId, bool& valid
             ResourceType resourceType1 = stringToResourceType(resourceStr1);
             ResourceType resourceType2 = stringToResourceType(resourceStr2);
             playYearOfPlenty(playerId, resourceType1, resourceType2);
+            // remove the year of plenty card from the player's hand
+            for (auto& player : players) {
+                if (player.id == playerId) {
+                    player.removeDevelopmentCard(DevelopmentCard(DevelopmentCardType::YEAR_OF_PLENTY));
+                    break;
+                }
+            }
+            validMove = true;
         } 
         else if (cardType == "3") {
             std::string resourceStr;
@@ -666,14 +688,34 @@ void Board::processCommand(const std::string& command, int playerId, bool& valid
             std::cin >> resourceStr;
             ResourceType resourceType = stringToResourceType(resourceStr);
             playMonopoly(playerId, resourceType);
+            // remove the monopoly card from the player's hand
+            for (auto& player : players) {
+                if (player.id == playerId) {
+                    player.removeDevelopmentCard(DevelopmentCard(DevelopmentCardType::MONOPOLY));
+                    break;
+                }
+            }
         } 
+        else if (cardType == "4") {
+            playKnight(playerId);
+            // remove the knight card from the player's hand
+            for (auto& player : players) {
+                if (player.id == playerId) {
+                    player.removeDevelopmentCard(DevelopmentCard(DevelopmentCardType::KNIGHT));
+                    break;
+                }
+            }
+
+            
+            validMove = true;
+        }
         else {
             std::cout << "Invalid development card type." << std::endl;
         }
         validMove = true;
     } 
     else {
-        std::cout << "nknown command." << std::endl;
+        std::cout << "Unknown command." << std::endl;
     }
 
 
@@ -695,6 +737,86 @@ void Board::processCommand(const std::string& command, int playerId, bool& valid
         printPlayerStatus(playerId);
     }
 }
+
+void Board::playKnight(int playerId) {
+    std::cout << "Player " << playerId << " is playing a Knight. They must move the robber to a new tile." << std::endl;
+
+    int tileId;
+    while (true) {
+        std::cout << "Choose a tile to move the robber to (excluding the desert): ";
+        std::cin >> tileId;
+
+        // find the number of tiles with the robber
+        int count = 0;
+        for(const auto& tile : tiles){
+            if(tile.hasRobber){
+                break;
+            }
+            count++;
+        }
+        // check if the robber is on the desert
+        if (tiles[tileId].type != ResourceType::DESERT) {
+            moveRobber(tileId);
+            break;
+        } 
+        else {
+            std::cout << "The robber cannot be placed on the desert. Try again." << std::endl;
+        }
+        // check if the robber is already on the tile
+        if(count == tileId){
+            std::cout << "The robber is already on this tile. Try again." << std::endl;
+            return;
+        }
+        
+    }
+
+    // update the number of knights played by the player
+    for (auto& player : players) {
+        if (player.id == playerId) {
+            player.knightsPlayed++;
+            std::cout << "Player " << playerId << " has played " << player.knightsPlayed << " knights." << std::endl;
+            break;
+        }
+    }
+
+    // check if the player has the largest army
+    updateLargestArmy(playerId);
+}
+
+void Board::updateLargestArmy(int playerId) {
+    int maxKnights = 0;
+    int playerWithLargestArmy = -1;
+
+    // find the player with the largest army
+    for (const auto& player : players) {
+        if (player.knightsPlayed > maxKnights) {
+            maxKnights = player.knightsPlayed;
+            playerWithLargestArmy = player.id;
+        }
+    }
+
+    // bring the player with the largest army 2 victory points if he has more than 3 knights
+    for (auto& player : players) {
+        // if the player has the largest army and has played more than 3 knights
+        if (player.id == playerWithLargestArmy && maxKnights >= 3) {
+            // if the player has the largest army
+            if (!player.hasLargestArmy) { 
+                player.hasLargestArmy = true;
+                player.victoryPoints += 2;
+                std::cout << "Player " << player.id << " now has the Largest Army and gains 2 victory points." << std::endl;
+            }
+        } 
+        // if the player does not have the largest army
+        else { 
+            if (player.hasLargestArmy) {
+                player.hasLargestArmy = false;
+                player.victoryPoints -= 2;
+                std::cout << "Player " << player.id << " lost the Largest Army and loses 2 victory points." << std::endl;
+            }
+        }
+    }
+}
+
 
 void Board::checkLongestRoad() {
     int longestRoad = 0;
@@ -849,5 +971,17 @@ void Board::playMonopoly(int playerId, ResourceType resourceType) {
         }
     }
 }
+
+
+// Function to get the players vector
+std::vector<Player>& Board::getPlayers() { 
+    return players; 
+}
+
+// Function to get the tiles vector
+const std::vector<HexTile>& Board::getTiles() const { 
+    return tiles; 
+}
+
 
 

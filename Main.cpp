@@ -90,7 +90,7 @@ int main() {
             board.processCommandWithBankTrade(command, playerIds[currentPlayer]);
             validMove = true; 
         } 
-        else if(command == "9" || command == "6" || command == "5" || command == "4" || command == "3" || command == "2") {
+        else if(command == "9" || command == "6" || command == "5" || command == "4" || command == "3" || command == "2" || command == "1") {
             board.processCommand(command, playerIds[currentPlayer], validMove);
             validMove = true;
         }

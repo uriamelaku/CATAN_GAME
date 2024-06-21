@@ -56,6 +56,8 @@ public:
     ResourceType stringToResourceType(const std::string& resourceStr) const;
     void handleRobber();
     void moveRobber(int tileId);
+    
+    void updateLargestArmy(int playerId);
 
     void checkLongestRoad();
     int calculateLongestRoad(int playerId) const;
@@ -68,6 +70,11 @@ public:
     void playRoadBuilding(int playerId);
     void playYearOfPlenty(int playerId, ResourceType resourceType1, ResourceType resourceType2);
     void playMonopoly(int playerId, ResourceType resourceType);
+    void playKnight(int playerId);
+
+    // Getters for testing purposes
+    std::vector<Player>& getPlayers();
+    const std::vector<HexTile>& getTiles() const;
 
 
 

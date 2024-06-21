@@ -32,6 +32,7 @@ public:
     bool tradeWithBank(ResourceType giveResource, ResourceType getResource);
     void updateVictoryPoints();
     std::string DevelopmentCardTypeToString(DevelopmentCardType type) const;
+    void removeDevelopmentCard(const DevelopmentCard& card);
 };
 
 #endif // PLAYER_HPP

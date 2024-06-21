@@ -1,4 +1,7 @@
 #include "Player.hpp"
+#include <iostream>
+#include <algorithm>
+#include <string>
 
 Player::Player(int playerId) : id(playerId), settlements(0), cities(0), roads(0), roadCount(2), settlementCount(2), cityCount(0) {
     resources[ResourceType::WOOD] = 0;
@@ -10,6 +13,16 @@ Player::Player(int playerId) : id(playerId), settlements(0), cities(0), roads(0)
 
 void Player::addDevelopmentCard(const DevelopmentCard& card) {
     developmentCards.push_back(card);
+}
+
+void Player::removeDevelopmentCard(const DevelopmentCard& card) {
+    for (auto it = developmentCards.begin(); it != developmentCards.end(); ++it) {
+        if (it->type == card.type) {
+            developmentCards.erase(it);
+            return;
+        }
+    }
+    std::cerr << "Error: Development card not found." << std::endl;
 }
 
 bool Player::hasResources(const std::unordered_map<ResourceType, int>& cost) const {
