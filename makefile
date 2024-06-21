@@ -15,3 +15,6 @@ $(EXEC): $(OBJS)
 
 clean:
 	rm -f $(OBJS) $(EXEC)
+
+catan: all
+	./$(EXEC)
