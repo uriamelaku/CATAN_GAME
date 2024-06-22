@@ -1,3 +1,5 @@
+//ooriamelaku@gmail.com
+//208734889
 #ifndef RESOURCE_TYPE_HPP
 #define RESOURCE_TYPE_HPP
 
