@@ -1,3 +1,5 @@
+//ooriamelaku@gmail.com
+//208734889
 #include "HexTile.hpp"
 
 HexTile::HexTile(ResourceType type, int number) : number(number), type(type) { // אתחול לפי הסדר ב-HPP
