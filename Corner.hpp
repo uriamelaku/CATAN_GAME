@@ -1,3 +1,5 @@
+//ooriamelaku@gmail.com
+//208734889
 #ifndef CORNER_HPP
 #define CORNER_HPP
 
